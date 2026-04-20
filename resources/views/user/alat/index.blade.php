@@ -1,42 +1,53 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800">Daftar Alat Tersedia</h2>
-    </x-slot>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @forelse($alats as $alat)
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
-                    @if($alat->foto)
-                        <img src="{{ Storage::url($alat->foto) }}" class="w-full h-48 object-cover">
-                    @else
-                        <div class="w-full h-48 bg-gray-100 flex items-center justify-center">
-                            <span class="text-gray-400 text-sm">Tidak ada foto</span>
-                        </div>
-                    @endif
-                    <div class="p-5">
-                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">
-                            {{ $alat->kategori->nama_kategori }}
-                        </span>
-                        <h3 class="font-semibold text-gray-800 mt-3 text-lg">{{ $alat->nama_alat }}</h3>
-                        <p class="text-sm text-gray-500 mt-1">Kode: {{ $alat->kode_alat }}</p>
-                        <p class="text-sm text-gray-500">Kondisi: <span class="text-green-600 font-medium">{{ ucfirst($alat->kondisi) }}</span></p>
-                        <p class="text-sm text-gray-500">Tersedia: <span class="text-green-600 font-bold">{{ $alat->jumlah_tersedia }}</span> unit</p>
-                        @if($alat->deskripsi)
-                            <p class="text-sm text-gray-400 mt-2">{{ Str::limit($alat->deskripsi, 80) }}</p>
-                        @endif
-                        <a href="{{ route('user.peminjaman.create', $alat->id) }}"
-                           class="mt-4 block text-center bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
-                            Pinjam Alat
-                        </a>
-                    </div>
-                </div>
-                @empty
-                <div class="col-span-3 text-center py-16">
-                    <p class="text-gray-400 text-lg">Tidak ada alat yang tersedia saat ini.</p>
-                </div>
-                @endforelse
+<x-user-layout>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <div>
+        <h3 style="font-size:20px;font-weight:700;color:#333;">🔧 Daftar Alat Tersedia</h3>
+        <p style="font-size:13px;color:#888;margin-top:2px;">Pilih alat yang ingin kamu pinjam</p>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+    @forelse($alats as $alat)
+    <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(129,166,198,0.15);border:2px solid transparent;transition:all .2s;"
+         onmouseover="this.style.borderColor='#81A6C6';this.style.boxShadow='0 6px 20px rgba(129,166,198,0.25)'"
+         onmouseout="this.style.borderColor='transparent';this.style.boxShadow='0 2px 10px rgba(129,166,198,0.15)'">
+        @if($alat->foto)
+            <img src="{{ Storage::url($alat->foto) }}" style="width:100%;height:180px;object-fit:cover;">
+        @else
+            <div style="width:100%;height:180px;background:linear-gradient(135deg,#dbeafe,#fce7f3);display:flex;align-items:center;justify-content:center;font-size:48px;">🔧</div>
+        @endif
+        <div style="padding:18px;">
+            <span style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;">
+                {{ $alat->kategori->nama_kategori }}
+            </span>
+            <h3 style="font-size:16px;font-weight:700;color:#333;margin-top:10px;">{{ $alat->nama_alat }}</h3>
+            <p style="font-size:13px;color:#888;margin-top:4px;">Kode: {{ $alat->kode_alat }}</p>
+            <div style="display:flex;justify-content:space-between;margin-top:8px;">
+                <p style="font-size:13px;color:#666;">Kondisi: <span style="color:#10b981;font-weight:600;">{{ ucfirst($alat->kondisi) }}</span></p>
+                <p style="font-size:13px;color:#666;">Tersedia: <span style="color:#81A6C6;font-weight:700;">{{ $alat->jumlah_tersedia }}</span></p>
             </div>
+            @if($alat->deskripsi)
+                <p style="font-size:12px;color:#aaa;margin-top:8px;">{{ Str::limit($alat->deskripsi, 70) }}</p>
+            @endif
+            @if($alat->jumlah_tersedia > 0)
+                <a href="{{ route('user.peminjaman.create', $alat->id) }}"
+                   style="margin-top:14px;display:block;text-align:center;background:linear-gradient(135deg,#81A6C6,#E8A0BF);color:white;padding:10px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;">
+                    Pinjam Alat
+                </a>
+            @else
+                <div style="margin-top:14px;display:block;text-align:center;background:#f3f4f6;color:#aaa;padding:10px;border-radius:10px;font-size:14px;font-weight:600;">
+                    Tidak Tersedia
+                </div>
+            @endif
         </div>
     </div>
-</x-app-layout>
+    @empty
+    <div style="grid-column:span 3;text-align:center;padding:60px;color:#aaa;">
+        <p style="font-size:48px;">🔧</p>
+        <p style="font-size:16px;margin-top:12px;">Tidak ada alat yang tersedia saat ini.</p>
+    </div>
+    @endforelse
+</div>
+
+</x-user-layout>

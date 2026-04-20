@@ -14,13 +14,17 @@ class PengembalianController extends Controller
     }
 
     public function proses(Peminjaman $peminjaman)
-    {
-        // Kembalikan stok
-        $peminjaman->alat->increment('jumlah_tersedia', $peminjaman->jumlah_pinjam);
-        
-        $peminjaman->update(['status' => 'dikembalikan']);
+{
+    $peminjaman->alat->increment('jumlah_tersedia', $peminjaman->jumlah_pinjam);
+    $peminjaman->update(['status' => 'dikembalikan']);
 
-        return redirect()->route('petugas.pengembalian.index')
-                         ->with('success','Alat berhasil dikembalikan! Stok sudah diperbarui.');
+    // Cek terlambat — redirect ke form denda
+    if ($peminjaman->tanggal_kembali->isPast()) {
+        return redirect()->route('petugas.denda.create', $peminjaman)
+                         ->with('warning', '⚠️ Pengembalian terlambat! Silakan input denda.');
     }
+
+    return redirect()->route('petugas.pengembalian.index')
+                     ->with('success', 'Alat berhasil dikembalikan! Stok sudah diperbarui.');
+}
 }

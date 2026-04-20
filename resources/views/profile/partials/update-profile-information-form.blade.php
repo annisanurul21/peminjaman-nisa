@@ -1,64 +1,56 @@
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
-        </h2>
+<div style="padding-bottom:16px;margin-bottom:20px;border-bottom:2px solid #f3f4f6;">
+    <h3 style="font-size:18px;font-weight:700;color:#333;">⚙️ Informasi Profil</h3>
+    <p style="font-size:13px;color:#888;margin-top:4px;">Perbarui nama dan alamat email akunmu</p>
+</div>
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
-    </header>
+<form id="send-verification" method="post" action="{{ route('verification.send') }}">
+    @csrf
+</form>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form>
+<form method="post" action="{{ route('profile.update') }}">
+    @csrf
+    @method('patch')
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
-        @csrf
-        @method('patch')
+    <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:6px;">Nama</label>
+        <input type="text" name="name" value="{{ old('name', $user->name) }}" required autofocus
+               style="width:100%;border:2px solid #e5e7eb;border-radius:10px;padding:10px 14px;font-size:14px;outline:none;font-family:'Figtree',sans-serif;"
+               onfocus="this.style.borderColor='#A8DF8E'" onblur="this.style.borderColor='#e5e7eb'">
+        @if($errors->get('name'))
+            <p style="color:#c0446a;font-size:12px;margin-top:4px;">{{ implode(', ', $errors->get('name')) }}</p>
+        @endif
+    </div>
 
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
-        </div>
+    <div style="margin-bottom:24px;">
+        <label style="display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:6px;">Email</label>
+        <input type="email" name="email" value="{{ old('email', $user->email) }}" required
+               style="width:100%;border:2px solid #e5e7eb;border-radius:10px;padding:10px 14px;font-size:14px;outline:none;font-family:'Figtree',sans-serif;"
+               onfocus="this.style.borderColor='#A8DF8E'" onblur="this.style.borderColor='#e5e7eb'">
+        @if($errors->get('email'))
+            <p style="color:#c0446a;font-size:12px;margin-top:4px;">{{ implode(', ', $errors->get('email')) }}</p>
+        @endif
 
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+        @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+            <div style="margin-top:8px;background:#FFD8DF;padding:10px 14px;border-radius:8px;">
+                <p style="font-size:13px;color:#c0446a;">Email belum terverifikasi.
+                    <button form="send-verification" style="background:none;border:none;color:#c0446a;font-weight:700;cursor:pointer;text-decoration:underline;">
+                        Kirim ulang verifikasi
+                    </button>
+                </p>
+                @if (session('status') === 'verification-link-sent')
+                    <p style="font-size:13px;color:#065f46;margin-top:4px;">Link verifikasi telah dikirim!</p>
+                @endif
+            </div>
+        @endif
+    </div>
 
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
-                </div>
-            @endif
-        </div>
-
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
-
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
-            @endif
-        </div>
-    </form>
-</section>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <button type="submit"
+                style="background:linear-gradient(135deg,#A8DF8E,#8cc970);color:#2d5a1a;padding:11px 28px;border-radius:10px;font-size:14px;font-weight:700;border:none;cursor:pointer;">
+            💾 Simpan
+        </button>
+        @if (session('status') === 'profile-updated')
+            <p style="font-size:13px;color:#065f46;font-weight:600;">✓ Tersimpan!</p>
+        @endif
+    </div>
+</form>

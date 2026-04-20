@@ -1,60 +1,59 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800">Monitor Pengembalian Alat</h2>
-    </x-slot>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(session('success'))
-                <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">{{ session('success') }}</div>
-            @endif
-            <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Peminjam</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Alat</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jumlah</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Batas Kembali</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($peminjamans as $i => $p)
-                        @php $terlambat = $p->tanggal_kembali->isPast() && $p->status === 'disetujui'; @endphp
-                        <tr class="{{ $terlambat ? 'bg-red-50' : '' }}">
-                            <td class="px-4 py-4 text-sm">{{ $i+1 }}</td>
-                            <td class="px-4 py-4 text-sm">
-                                <p class="font-medium text-gray-900">{{ $p->user->name }}</p>
-                                <p class="text-gray-500 text-xs">{{ $p->user->nisn }}</p>
-                            </td>
-                            <td class="px-4 py-4 text-sm text-gray-900">{{ $p->alat->nama_alat }}</td>
-                            <td class="px-4 py-4 text-sm text-gray-600">{{ $p->jumlah_pinjam }} unit</td>
-                            <td class="px-4 py-4 text-sm {{ $terlambat ? 'text-red-600 font-medium' : 'text-gray-600' }}">
-                                {{ $p->tanggal_kembali->format('d/m/Y') }}
-                                @if($terlambat) <span class="text-xs">(Terlambat!)</span> @endif
-                            </td>
-                            <td class="px-4 py-4">
-                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Dipinjam</span>
-                            </td>
-                            <td class="px-4 py-4">
-                                <form action="{{ route('petugas.pengembalian.proses', $p) }}" method="POST"
-                                      onsubmit="return confirm('Konfirmasi pengembalian alat ini?')">
-                                    @csrf
-                                    <button type="submit"
-                                            style="background-color:#2563EB;color:white;padding:6px 12px;border-radius:6px;font-size:12px;border:none;cursor:pointer;">
-                                        Konfirmasi Kembali
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr><td colspan="7" class="px-6 py-4 text-center text-gray-400">Tidak ada alat yang sedang dipinjam.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<x-petugas-layout>
+<x-slot name="header">Monitor Pengembalian Alat</x-slot>
+
+@if(session('success'))
+    <div style="background:#d1fae5;border:1px solid #6ee7b7;color:#065f46;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:14px;">
+        ✓ {{ session('success') }}
     </div>
-</x-app-layout>
+@endif
+
+<div style="background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+    <table style="width:100%;border-collapse:collapse;">
+        <thead>
+            <tr style="background:linear-gradient(90deg,#CC4444,#aa3333);">
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">No</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Peminjam</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Alat</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Jumlah</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Batas Kembali</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Status</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($peminjamans as $i => $p)
+            @php $terlambat = $p->tanggal_kembali->isPast(); @endphp
+            <tr style="border-bottom:1px solid #f3f4f6;{{ $terlambat ? 'background:#fff5f5;' : ($i % 2 != 0 ? 'background:#fafafa;' : '') }}">
+                <td style="padding:13px 16px;font-size:14px;color:#888;">{{ $i+1 }}</td>
+                <td style="padding:13px 16px;">
+                    <p style="font-weight:700;color:#333;font-size:14px;">{{ $p->user->name }}</p>
+                    <p style="font-size:12px;color:#999;">{{ $p->user->nisn }}</p>
+                </td>
+                <td style="padding:13px 16px;font-size:14px;color:#333;font-weight:600;">{{ $p->alat->nama_alat }}</td>
+                <td style="padding:13px 16px;font-size:14px;color:#555;">{{ $p->jumlah_pinjam }} unit</td>
+                <td style="padding:13px 16px;font-size:14px;{{ $terlambat ? 'color:#CC4444;font-weight:700;' : 'color:#555;' }}">
+                    {{ $p->tanggal_kembali->format('d/m/Y') }}
+                    @if($terlambat)<br><span style="font-size:11px;background:#ffecec;color:#CC4444;padding:2px 8px;border-radius:10px;">⚠ Terlambat!</span>@endif
+                </td>
+                <td style="padding:13px 16px;">
+                    <span style="background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">Dipinjam</span>
+                </td>
+                <td style="padding:13px 16px;">
+                    <form action="{{ route('petugas.pengembalian.proses', $p) }}" method="POST"
+                          onsubmit="return confirm('Konfirmasi pengembalian alat ini?')">
+                        @csrf
+                        <button type="submit"
+                                style="background:linear-gradient(135deg,#CC4444,#aa3333);color:white;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;">
+                            ✓ Konfirmasi Kembali
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr><td colspan="7" style="padding:40px;text-align:center;color:#aaa;font-size:14px;">Tidak ada alat yang sedang dipinjam.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+</x-petugas-layout>

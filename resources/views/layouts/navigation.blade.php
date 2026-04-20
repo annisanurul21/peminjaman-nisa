@@ -20,10 +20,14 @@
                         <x-nav-link :href="route('petugas.dashboard')" :active="request()->routeIs('petugas.dashboard')">Dashboard</x-nav-link>
                         <x-nav-link :href="route('petugas.peminjaman.index')" :active="request()->routeIs('petugas.peminjaman.*')">Peminjaman</x-nav-link>
                         <x-nav-link :href="route('petugas.laporan.index')" :active="request()->routeIs('petugas.laporan.*')">Laporan</x-nav-link>
+                        <x-nav-link :href="route('petugas.denda.index')" :active="request()->routeIs('petugas.denda.*')">Denda</x-nav-link>
                     @else
                         <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.dashboard')">Dashboard</x-nav-link>
                         <x-nav-link :href="route('user.alat.index')" :active="request()->routeIs('user.alat.*')">Daftar Alat</x-nav-link>
                         <x-nav-link :href="route('user.peminjaman.riwayat')" :active="request()->routeIs('user.peminjaman.*')">Riwayat</x-nav-link>
+                        <x-nav-link :href="route('user.denda.index')" :active="request()->routeIs('user.denda.*')">
+        💸 Denda
+    </x-nav-link>
                     @endif
                 </div>
             </div>

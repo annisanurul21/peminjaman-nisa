@@ -20,4 +20,5 @@ class Peminjaman extends Model
     public function user() { return $this->belongsTo(User::class); }
     public function alat() { return $this->belongsTo(Alat::class); }
     public function petugas() { return $this->belongsTo(User::class, 'diproses_oleh'); }
+    public function denda() { return $this->hasOne(\App\Models\Denda::class); }
 }

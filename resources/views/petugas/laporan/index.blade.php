@@ -1,144 +1,124 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                {{ __('Laporan Peminjaman') }}
-            </h2>
-            <a href="{{ route('petugas.laporan.print', request()->query()) }}" 
-               target="_blank" 
-               class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
-                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                </svg>
-                Cetak Laporan
+<x-petugas-layout>
+<x-slot name="header">Laporan Peminjaman</x-slot>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <div>
+        <h4 style="font-size:21px;font-weight:700;color:#FFF;">Data Laporan</h4>
+        <p style="font-size:14px;color:#333;margin-top:2px;">Filter dan cetak laporan peminjaman alat</p>
+    </div>
+    <a href="{{ route('petugas.laporan.print', request()->query()) }}" target="_blank"
+       style="background:linear-gradient(135deg,#CC4444,#aa3333);color:white;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;">
+        🖨️ Cetak Laporan
+    </a>
+</div>
+
+<!-- Filter -->
+<div style="background:white;border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+    <p style="font-size:13px;font-weight:700;color:#CC4444;margin-bottom:14px;text-transform:uppercase;letter-spacing:.05em;">🔍 Filter Laporan</p>
+    <form method="GET" action="{{ route('petugas.laporan.index') }}"
+          style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:5px;">Nama Peminjam</label>
+            <input type="text" name="nama" value="{{ request('nama') }}"
+                   style="width:100%;border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:13px;outline:none;"
+                   placeholder="Cari nama...">
+        </div>
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:5px;">Status</label>
+            <select name="status" style="width:100%;border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:13px;outline:none;">
+                <option value="">Semua Status</option>
+                <option value="menunggu" {{ request('status')=='menunggu'?'selected':'' }}>Menunggu</option>
+                <option value="disetujui" {{ request('status')=='disetujui'?'selected':'' }}>Disetujui</option>
+                <option value="ditolak" {{ request('status')=='ditolak'?'selected':'' }}>Ditolak</option>
+                <option value="dikembalikan" {{ request('status')=='dikembalikan'?'selected':'' }}>Dikembalikan</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:5px;">Dari Tanggal</label>
+            <input type="date" name="dari" value="{{ request('dari') }}"
+                   style="width:100%;border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:13px;outline:none;">
+        </div>
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:5px;">Sampai Tanggal</label>
+            <input type="date" name="sampai" value="{{ request('sampai') }}"
+                   style="width:100%;border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:13px;outline:none;">
+        </div>
+        <div style="grid-column:span 4;display:flex;gap:10px;">
+            <button type="submit"
+                    style="background:#CC4444;color:white;padding:9px 24px;border-radius:8px;font-size:13px;font-weight:700;border:none;cursor:pointer;">
+                Terapkan Filter
+            </button>
+            <a href="{{ route('petugas.laporan.index') }}"
+               style="background:#f3f4f6;color:#555;padding:9px 24px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;">
+                Reset
             </a>
         </div>
-    </x-slot>
+    </form>
+</div>
 
-    <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            
-            <div class="mb-6 rounded-xl bg-white p-6 shadow-sm border border-gray-100">
-                <div class="mb-4 flex items-center border-b border-gray-50 pb-3">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-600">Filter Laporan</h3>
-                </div>
-                <form method="GET" action="{{ route('petugas.laporan.index') }}" class="grid grid-cols-1 gap-4 md:grid-cols-4">
-                    <div>
-                        <label class="mb-1 block text-xs font-semibold text-gray-500 uppercase">Nama Peminjam</label>
-                        <input type="text" name="nama" value="{{ request('nama') }}" 
-                               class="w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500" 
-                               placeholder="Cari nama...">
-                    </div>
-                    <div>
-                        <label class="mb-1 block text-xs font-semibold text-gray-500 uppercase">Status</label>
-                        <select name="status" class="w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <option value="">Semua Status</option>
-                            @foreach(['menunggu', 'disetujui', 'ditolak', 'dikembalikan'] as $status)
-                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                    {{ ucfirst($status) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="mb-1 block text-xs font-semibold text-gray-500 uppercase">Dari Tanggal</label>
-                        <input type="date" name="dari" value="{{ request('dari') }}" 
-                               class="w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="mb-1 block text-xs font-semibold text-gray-500 uppercase">Sampai Tanggal</label>
-                        <input type="date" name="sampai" value="{{ request('sampai') }}" 
-                               class="w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    <div class="col-span-full flex items-center gap-3 pt-2">
-                        <button type="submit" class="rounded-lg bg-indigo-600 px-6 py-2 text-sm font-bold text-white transition hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200">
-                            Terapkan Filter
-                        </button>
-                        <a href="{{ route('petugas.laporan.index') }}" class="rounded-lg bg-gray-100 px-6 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-200">
-                            Reset
-                        </a>
-                    </div>
-                </form>
-            </div>
-
-            <div class="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-                @php
-                    $stats = [
-                        ['label' => 'Total Peminjaman', 'count' => $peminjamans->count(), 'color' => 'border-gray-400', 'text' => 'text-gray-800'],
-                        ['label' => 'Menunggu', 'count' => $peminjamans->where('status','menunggu')->count(), 'color' => 'border-yellow-400', 'text' => 'text-yellow-600'],
-                        ['label' => 'Disetujui', 'count' => $peminjamans->where('status','disetujui')->count(), 'color' => 'border-green-400', 'text' => 'text-green-600'],
-                        ['label' => 'Dikembalikan', 'count' => $peminjamans->where('status','dikembalikan')->count(), 'color' => 'border-blue-400', 'text' => 'text-blue-600'],
-                    ];
-                @endphp
-
-                @foreach($stats as $stat)
-                    <div class="rounded-xl border-l-4 bg-white p-4 shadow-sm {{ $stat['color'] }}">
-                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">{{ $stat['label'] }}</p>
-                        <p class="mt-1 text-2xl font-black {{ $stat['text'] }}">{{ $stat['count'] }}</p>
-                    </div>
-                @endforeach
-            </div>
-
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-xl border border-gray-100">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50/50">
-                            <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">No</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">Peminjam</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">Alat</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">Jumlah</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">Periode</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-500">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 bg-white">
-                            @forelse($peminjamans as $i => $p)
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="px-6 py-4 text-sm text-gray-400">{{ $i + 1 }}</td>
-                                    <td class="px-6 py-4 text-sm">
-                                        <div class="font-bold text-gray-900">{{ $p->user->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ $p->user->nisn }} • {{ $p->user->kelas }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-medium text-gray-700">
-                                        {{ $p->alat->nama_alat }}
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600">
-                                        {{ $p->jumlah_pinjam }} <span class="text-xs text-gray-400">Unit</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600">
-                                        <div class="flex flex-col">
-                                            <span>{{ $p->tanggal_pinjam->format('d/m/Y') }}</span>
-                                            <span class="text-xs text-gray-400">s/d {{ $p->tanggal_kembali->format('d/m/Y') }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        @php
-                                            $badge = match($p->status) {
-                                                'menunggu'     => 'bg-yellow-50 text-yellow-700 border-yellow-100',
-                                                'disetujui'    => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                                'ditolak'      => 'bg-red-50 text-red-700 border-red-100',
-                                                'dikembalikan' => 'bg-blue-50 text-blue-700 border-blue-100',
-                                                default        => 'bg-gray-50 text-gray-700 border-gray-100'
-                                            };
-                                        @endphp
-                                        <span class="inline-flex rounded-full border px-2.5 py-0.5 text-xs font-bold {{ $badge }}">
-                                            {{ ucfirst($p->status) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="px-6 py-12 text-center">
-                                        <p class="text-sm font-medium text-gray-400">Tidak ada data laporan ditemukan.</p>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
+<!-- Statistik -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+    <div style="background:white;border-radius:12px;padding:16px;border-left:4px solid #6b7280;box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+        <p style="font-size:11px;color:#888;text-transform:uppercase;">Total</p>
+        <p style="font-size:28px;font-weight:800;color:#333;">{{ $peminjamans->count() }}</p>
     </div>
-</x-app-layout>
+    <div style="background:white;border-radius:12px;padding:16px;border-left:4px solid #f59e0b;box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+        <p style="font-size:11px;color:#888;text-transform:uppercase;">Menunggu</p>
+        <p style="font-size:28px;font-weight:800;color:#f59e0b;">{{ $peminjamans->where('status','menunggu')->count() }}</p>
+    </div>
+    <div style="background:white;border-radius:12px;padding:16px;border-left:4px solid #10b981;box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+        <p style="font-size:11px;color:#888;text-transform:uppercase;">Disetujui</p>
+        <p style="font-size:28px;font-weight:800;color:#10b981;">{{ $peminjamans->where('status','disetujui')->count() }}</p>
+    </div>
+    <div style="background:white;border-radius:12px;padding:16px;border-left:4px solid #3b82f6;box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+        <p style="font-size:11px;color:#888;text-transform:uppercase;">Dikembalikan</p>
+        <p style="font-size:28px;font-weight:800;color:#3b82f6;">{{ $peminjamans->where('status','dikembalikan')->count() }}</p>
+    </div>
+</div>
+
+<!-- Tabel -->
+<div style="background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+    <table style="width:100%;border-collapse:collapse;">
+        <thead>
+            <tr style="background:linear-gradient(90deg,#CC4444,#aa3333);">
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">No</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Peminjam</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Alat</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Jumlah</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Periode</th>
+                <th style="padding:13px 16px;text-align:left;font-size:12px;font-weight:700;color:white;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($peminjamans as $i => $p)
+            <tr style="border-bottom:1px solid #f3f4f6;{{ $i % 2 != 0 ? 'background:#fafafa;' : '' }}">
+                <td style="padding:13px 16px;font-size:14px;color:#888;">{{ $i+1 }}</td>
+                <td style="padding:13px 16px;">
+                    <p style="font-weight:700;color:#333;font-size:14px;">{{ $p->user->name }}</p>
+                    <p style="font-size:12px;color:#999;">{{ $p->user->nisn }} • {{ $p->user->kelas }}</p>
+                </td>
+                <td style="padding:13px 16px;font-size:14px;color:#333;">{{ $p->alat->nama_alat }}</td>
+                <td style="padding:13px 16px;font-size:14px;color:#555;">{{ $p->jumlah_pinjam }} unit</td>
+                <td style="padding:13px 16px;font-size:13px;color:#555;">
+                    {{ $p->tanggal_pinjam->format('d/m/Y') }}<br>
+                    <span style="color:#aaa;font-size:12px;">s/d {{ $p->tanggal_kembali->format('d/m/Y') }}</span>
+                </td>
+                <td style="padding:13px 16px;">
+                    @php $badge = match($p->status) {
+                        'menunggu' => 'background:#fef3c7;color:#92400e',
+                        'disetujui' => 'background:#d1fae5;color:#065f46',
+                        'ditolak' => 'background:#fee2e2;color:#991b1b',
+                        'dikembalikan' => 'background:#dbeafe;color:#1e40af',
+                        default => 'background:#f3f4f6;color:#374151'
+                    }; @endphp
+                    <span style="{{ $badge }};padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">{{ ucfirst($p->status) }}</span>
+                </td>
+            </tr>
+            @empty
+            <tr><td colspan="6" style="padding:40px;text-align:center;color:#aaa;font-size:14px;">Tidak ada data laporan.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+</x-petugas-layout>
